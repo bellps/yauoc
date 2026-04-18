@@ -1,4 +1,4 @@
-.PHONY: help up down stop restart logs ps build shell db-shell db-push db-generate db-seed db-studio db-reset install lint typecheck clean prune
+.PHONY: help up down stop restart logs ps build build-prod shell db-shell db-push db-generate db-seed db-studio db-reset install lint typecheck clean prune
 
 COMPOSE ?= docker compose
 APP     ?= app
@@ -25,7 +25,10 @@ logs: ## Segue os logs do app
 ps: ## Lista os serviços
 	$(COMPOSE) ps
 
-build: ## Build da imagem de produção
+build: ## Build da imagem de desenvolvimento (Dockerfile.dev)
+	$(COMPOSE) build $(APP)
+
+build-prod: ## Build da imagem de produção (Dockerfile)
 	docker build -t yauoc:latest .
 
 shell: ## Abre um shell no container do app
