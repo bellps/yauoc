@@ -1,4 +1,4 @@
-# yauoc — Wedding Management App
+# yauoc — γάμος
 
 Aplicação web para organizarmos nosso casamento: cadastro de famílias,
 confirmação de presença (RSVP), lista de presentes e painel administrativo.
