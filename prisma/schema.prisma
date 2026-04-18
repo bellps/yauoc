@@ -1,0 +1,46 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Gender {
+  MALE
+  FEMALE
+  OTHER
+}
+
+model Admin {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  name         String
+  passwordHash String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Family {
+  id          String         @id @default(cuid())
+  name        String
+  accessToken String         @unique
+  notes       String?
+  members     FamilyMember[]
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+
+  @@index([accessToken])
+}
+
+model FamilyMember {
+  id       String  @id @default(cuid())
+  familyId String
+  family   Family  @relation(fields: [familyId], references: [id], onDelete: Cascade)
+  name     String
+  age      Int?
+  gender   Gender?
+
+  @@index([familyId])
+}
