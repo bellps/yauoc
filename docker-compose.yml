@@ -1,0 +1,44 @@
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: yauoc
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d yauoc"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  app:
+    image: node:22-alpine
+    working_dir: /app
+    command: sh -c "npm install && npx prisma generate && npm run dev"
+    environment:
+      NODE_ENV: development
+      DATABASE_URL: postgresql://postgres:postgres@db:5432/yauoc?schema=public
+      AUTH_SECRET: ${AUTH_SECRET:-dev-secret-change-me-abcdefghijklmnopqrstuvwxyz01}
+      AUTH_TRUST_HOST: "true"
+      ADMIN_SEED_EMAIL: ${ADMIN_SEED_EMAIL:-admin@yauoc.local}
+      ADMIN_SEED_PASSWORD: ${ADMIN_SEED_PASSWORD:-change-me}
+      ADMIN_SEED_NAME: ${ADMIN_SEED_NAME:-Admin}
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/app
+      - node_modules:/app/node_modules
+      - next_cache:/app/.next
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  db_data:
+  node_modules:
+  next_cache:

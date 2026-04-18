@@ -26,32 +26,47 @@ fatia do produto:
 Próximas branches cobrirão RSVP, lista de presentes, jobs em background e a
 landing page final.
 
-## Como rodar
+## Como rodar com Docker (recomendado)
+
+Requisitos: Docker e Docker Compose.
+
+```bash
+# 1. (Opcional) crie um .env na raiz para sobrescrever variáveis
+cp .env.example .env
+
+# 2. Suba o stack (app + postgres)
+make up
+
+# 3. Na primeira vez, crie o schema e o admin inicial
+make db-push
+make db-seed
+
+# 4. Acompanhe os logs
+make logs
+```
+
+Acesse `http://localhost:3000` (landing) e `http://localhost:3000/admin` para
+entrar com as credenciais semeadas (`ADMIN_SEED_EMAIL` / `ADMIN_SEED_PASSWORD`,
+defaults: `admin@yauoc.local` / `change-me`).
+
+Rode `make help` para ver todos os targets disponíveis (`db-shell`, `db-studio`,
+`shell`, `clean`, etc.).
+
+## Como rodar sem Docker
 
 Requisitos: Node.js 20+ e PostgreSQL.
 
 ```bash
-# 1. Instale dependências
 npm install
-
-# 2. Copie o .env
 cp .env.example .env
 # edite DATABASE_URL, AUTH_SECRET (openssl rand -base64 32),
 # ADMIN_SEED_EMAIL e ADMIN_SEED_PASSWORD
 
-# 3. Crie schema no banco e gere o Prisma Client
 npm run db:push
 npm run db:generate
-
-# 4. Crie o usuário administrador inicial
 npm run db:seed
-
-# 5. Inicie o servidor
 npm run dev
 ```
-
-Acesse `http://localhost:3000` (landing) e `http://localhost:3000/admin` para
-entrar no painel com as credenciais semeadas.
 
 ## Estrutura
 
@@ -85,3 +100,11 @@ src/
 - `npm run db:generate` — gera o Prisma Client
 - `npm run db:seed` — cria o admin inicial
 - `npm run db:studio` — Prisma Studio
+
+## Docker
+
+- `Dockerfile` — build multi-stage de produção (Next.js `standalone`).
+- `docker-compose.yml` — stack de desenvolvimento com Postgres 16 + app em
+  Node 22 com hot reload via bind mount.
+- `Makefile` — atalhos (`up`, `down`, `logs`, `db-push`, `db-seed`, `shell`,
+  `db-shell`, `clean`, …). Rode `make help` para a lista completa.
