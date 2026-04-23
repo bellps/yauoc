@@ -122,6 +122,35 @@ See `.env.example`.
 - **Styling**: Tailwind utility classes, stone palette, `font-serif` for display text. No component library.
 - **Language**: UI copy is in Portuguese (pt-BR).
 
+## Convenções
+
+- Imports absolutos com alias `@/` (configurado no `tsconfig.json`) — evite caminhos relativos longos (`../../../`).
+- Nomes: PascalCase para modelos do Prisma e componentes React; camelCase para funções e variáveis em código.
+- Esquema do banco: siga o default do Prisma (camelCase no schema e nas colunas). Só use `@map` / `@@map` se houver um motivo concreto.
+- Validação de entrada com **Zod** no boundary das Server Actions — nunca confie direto no `FormData`.
+- **Server Actions protegidas** em `/admin/*` sempre chamam `ensureAdmin()` antes de tocar no Prisma.
+- Após qualquer mutação, chame `revalidatePath(...)` para invalidar o cache do App Router.
+- Copy da UI sempre em **pt-BR**. Erros expostos ao usuário também em pt-BR.
+- **Styling**: só Tailwind (paleta `stone`, `font-serif` para títulos). Sem MUI/shadcn/styled-components.
+- **Commits**: sujeito no imperativo e curto (ex: *"Add CLAUDE.md"*, *"Switch Docker images to node:22-slim"*); corpo opcional explicando o *porquê*.
+- Variáveis de ambiente novas precisam aparecer no `.env.example` com um placeholder seguro **e** ser documentadas na seção *Environment Variables Required*.
+- Mantenha o `Makefile` como fonte única da verdade para comandos de dev — se você cria um script novo, adicione um target correspondente.
+
+## Proibições
+
+- **NUNCA** use `any` em TypeScript — prefira `unknown` com narrowing, ou crie um tipo explícito.
+- **NUNCA** instancie `new PrismaClient()` em código de aplicação — use sempre o singleton de `@/lib/prisma`.
+- **NUNCA** importe `bcryptjs` (ou qualquer módulo Node-only) em `src/auth.config.ts` ou em qualquer coisa alcançada por `src/middleware.ts` — quebra o bundle edge.
+- **NUNCA** use `useActionState` do `react` — estamos no React 18, use `useFormState` / `useFormStatus` de `react-dom`.
+- **NUNCA** role um alfabeto de token próprio — use `generateAccessToken()` de `@/lib/token`.
+- **NUNCA** commite `.env` ou qualquer arquivo com segredos (`AUTH_SECRET`, credenciais de produção, etc.). Só `.env.example` entra no repositório.
+- **NUNCA** adicione biblioteca de componentes (MUI, shadcn, Chakra, etc.) — a stack é Tailwind puro.
+- **NUNCA** exponha o `accessToken` de uma família em rotas públicas fora do fluxo oficial de RSVP.
+- **NUNCA** troque para `prisma migrate` sem combinar antes — enquanto o schema é jovem a convenção é `prisma db push`.
+- **NUNCA** use `git commit --no-verify` nem pule hooks/linters para "fazer o build passar" — conserte a causa.
+- **NUNCA** escreva UI em inglês — todo texto visível ao usuário é em pt-BR.
+- **NUNCA** rode `make db-reset` ou `make clean` em ambiente compartilhado sem combinar — são destrutivos.
+
 ## Deployment
 
 Production is containerized. The multi-stage `Dockerfile` builds a Next.js `standalone` image based on `node:22-slim` with `openssl` and `ca-certificates` (required so Prisma's schema engine detects the right libssl). The runner stage runs as a non-root `nextjs` user.
