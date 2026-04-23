@@ -8,6 +8,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **Build**: `npm run build` — build production application (Next.js `standalone` output)
 - **Production**: `npm run start` — start production server
 - **Type check**: `npx tsc --noEmit` — verify TypeScript without emitting
+- **Tests**: no test framework is installed yet — add Jest/Vitest when needed
 
 ## Docker Commands (preferred for local dev)
 
@@ -16,9 +17,15 @@ All orchestration is exposed via `make help`. The dev stack runs Postgres 16 + t
 - **Build dev image**: `make build` (`docker compose build app`)
 - **Start stack**: `make up`
 - **Stop stack**: `make down` (`make clean` to also drop volumes)
+- **Stop without removing**: `make stop` / **Restart app**: `make restart`
+- **List services**: `make ps`
 - **Logs**: `make logs`
 - **App shell**: `make shell`
 - **DB shell (psql)**: `make db-shell`
+- **Install deps**: `make install`
+- **Type check**: `make typecheck` (`npx tsc --noEmit`)
+- **Lint**: `make lint` (`npx next lint` — requires ESLint config, not yet set up)
+- **Prune Docker images**: `make prune`
 - **Build prod image**: `make build-prod` (`docker build -t yauoc:latest .`)
 
 ## Database Commands
