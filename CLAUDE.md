@@ -151,10 +151,49 @@ See `.env.example`.
 - **NEVER** write UI copy in English — every user-facing string is in pt-BR.
 - **NEVER** run `make db-reset` or `make clean` against a shared environment without agreeing first — both are destructive.
 
+## Feature Status
+
+The original product scope covers six top-level features. Track work against this list and update the status as things land.
+
+### 1. Family Management — Shipped
+
+- Admin CRUD for families and members (name, age, gender, notes).
+- Unique access token per family via `generateAccessToken()` (unambiguous alphabet).
+- Copy token and regenerate token from the family detail page.
+- `FamilyMember` cascades on `Family` delete.
+
+### 2. RSVP Management — Not started
+
+- Guests entering their family `accessToken` on a public route to confirm attendance.
+- Per-member attendance toggle (who is coming, who isn't).
+- Simple decline flow for the whole family.
+- Expected schema additions: `attending Boolean?` on `FamilyMember`; `respondedAt` / `declinedAt` on `Family`. Possibly an `RsvpDeadline` setting (see feature 5).
+
+### 3. Gift List Management — Not started
+
+- Admin CRUD for wedding gifts (name, price, images).
+- Guests browsing the list and selecting a gift to purchase, or contributing a custom donation.
+- Expected models: `Gift` and `GiftContribution` (ties back to a `Family` or a `FamilyMember`).
+
+### 4. Guest Experience — Partial
+
+- Shipped: placeholder landing at `/` linking to the admin area.
+- Not started: final landing design, RSVP pages, gift list pages, any guest-facing copy beyond the placeholder.
+
+### 5. Admin Features — Partial
+
+- Shipped: admin authentication (NextAuth v5 Credentials), middleware protection on `/admin/*`, admin shell with sidebar, dashboard counters, family management UI.
+- Not started: gift management UI, general settings (RSVP deadline, event info), RSVP tracking / attendance dashboards.
+
+### 6. Integrations — Partial
+
+- Shipped: responsive layout via Tailwind, client-side interactivity (copy/regenerate token, dynamic member rows in the family form), Docker dev stack with Postgres 16 hot reload.
+- Not started: background jobs / workers for notifications and reminders (no queue/worker runtime yet — decide between a scheduled route, a cron container, or a dedicated worker when it lands).
+
 ## Maintaining This File
 
 `CLAUDE.md` is the canonical guide for anyone — human or agent — working in this repo. Keep it in sync with the code as the project evolves:
 
 - When you add, change, or remove a model, route, env var, Make target, convention, or prohibition, update the matching section **in the same PR**.
-- When a feature listed as "not yet shipped" lands, move it from that note into the appropriate section (Schema, Routes, Authentication Flow, etc.).
+- When a feature in *Feature Status* moves forward (Not started → Partial → Shipped), update its entry and move the concrete details into the appropriate architecture section (Schema, Routes, Authentication Flow, Key Files, etc.).
 - Treat this file as code, not documentation that drifts. PRs that change behavior without updating `CLAUDE.md` should be flagged in review.
