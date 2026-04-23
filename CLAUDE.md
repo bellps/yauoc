@@ -122,34 +122,34 @@ See `.env.example`.
 - **Styling**: Tailwind utility classes, stone palette, `font-serif` for display text. No component library.
 - **Language**: UI copy is in Portuguese (pt-BR).
 
-## Convenções
+## Conventions
 
-- Imports absolutos com alias `@/` (configurado no `tsconfig.json`) — evite caminhos relativos longos (`../../../`).
-- Nomes: PascalCase para modelos do Prisma e componentes React; camelCase para funções e variáveis em código.
-- Esquema do banco: siga o default do Prisma (camelCase no schema e nas colunas). Só use `@map` / `@@map` se houver um motivo concreto.
-- Validação de entrada com **Zod** no boundary das Server Actions — nunca confie direto no `FormData`.
-- **Server Actions protegidas** em `/admin/*` sempre chamam `ensureAdmin()` antes de tocar no Prisma.
-- Após qualquer mutação, chame `revalidatePath(...)` para invalidar o cache do App Router.
-- Copy da UI sempre em **pt-BR**. Erros expostos ao usuário também em pt-BR.
-- **Styling**: só Tailwind (paleta `stone`, `font-serif` para títulos). Sem MUI/shadcn/styled-components.
-- **Commits**: sujeito no imperativo e curto (ex: *"Add CLAUDE.md"*, *"Switch Docker images to node:22-slim"*); corpo opcional explicando o *porquê*.
-- Variáveis de ambiente novas precisam aparecer no `.env.example` com um placeholder seguro **e** ser documentadas na seção *Environment Variables Required*.
-- Mantenha o `Makefile` como fonte única da verdade para comandos de dev — se você cria um script novo, adicione um target correspondente.
+- Absolute imports via the `@/` alias (configured in `tsconfig.json`) — avoid long relative paths (`../../../`).
+- Naming: PascalCase for Prisma models and React components; camelCase for functions and variables in code.
+- Database schema: follow Prisma's defaults (camelCase in both the schema and the columns). Only use `@map` / `@@map` when there's a concrete reason.
+- Input validation with **Zod** at the Server Action boundary — never trust `FormData` directly.
+- **Protected Server Actions** under `/admin/*` always call `ensureAdmin()` before touching Prisma.
+- After any mutation, call `revalidatePath(...)` to invalidate the App Router cache.
+- UI copy is always in **pt-BR**. User-facing error messages are also in pt-BR.
+- **Styling**: Tailwind only (`stone` palette, `font-serif` for headings). No MUI/shadcn/styled-components.
+- **Commits**: short imperative subject (e.g. *"Add CLAUDE.md"*, *"Switch Docker images to node:22-slim"*); optional body explaining the *why*.
+- New environment variables must appear in `.env.example` with a safe placeholder **and** be documented in the *Environment Variables Required* section.
+- Keep the `Makefile` as the single source of truth for dev commands — if you add a new script, add a matching target.
 
-## Proibições
+## Prohibitions
 
-- **NUNCA** use `any` em TypeScript — prefira `unknown` com narrowing, ou crie um tipo explícito.
-- **NUNCA** instancie `new PrismaClient()` em código de aplicação — use sempre o singleton de `@/lib/prisma`.
-- **NUNCA** importe `bcryptjs` (ou qualquer módulo Node-only) em `src/auth.config.ts` ou em qualquer coisa alcançada por `src/middleware.ts` — quebra o bundle edge.
-- **NUNCA** use `useActionState` do `react` — estamos no React 18, use `useFormState` / `useFormStatus` de `react-dom`.
-- **NUNCA** role um alfabeto de token próprio — use `generateAccessToken()` de `@/lib/token`.
-- **NUNCA** commite `.env` ou qualquer arquivo com segredos (`AUTH_SECRET`, credenciais de produção, etc.). Só `.env.example` entra no repositório.
-- **NUNCA** adicione biblioteca de componentes (MUI, shadcn, Chakra, etc.) — a stack é Tailwind puro.
-- **NUNCA** exponha o `accessToken` de uma família em rotas públicas fora do fluxo oficial de RSVP.
-- **NUNCA** troque para `prisma migrate` sem combinar antes — enquanto o schema é jovem a convenção é `prisma db push`.
-- **NUNCA** use `git commit --no-verify` nem pule hooks/linters para "fazer o build passar" — conserte a causa.
-- **NUNCA** escreva UI em inglês — todo texto visível ao usuário é em pt-BR.
-- **NUNCA** rode `make db-reset` ou `make clean` em ambiente compartilhado sem combinar — são destrutivos.
+- **NEVER** use `any` in TypeScript — prefer `unknown` with narrowing, or define an explicit type.
+- **NEVER** instantiate `new PrismaClient()` in application code — always use the singleton from `@/lib/prisma`.
+- **NEVER** import `bcryptjs` (or any Node-only module) in `src/auth.config.ts` or anything reachable from `src/middleware.ts` — it breaks the edge bundle.
+- **NEVER** use `useActionState` from `react` — we're on React 18; use `useFormState` / `useFormStatus` from `react-dom`.
+- **NEVER** roll your own token alphabet — use `generateAccessToken()` from `@/lib/token`.
+- **NEVER** commit `.env` or any file containing secrets (`AUTH_SECRET`, production credentials, etc.). Only `.env.example` belongs in the repo.
+- **NEVER** add a component library (MUI, shadcn, Chakra, etc.) — the stack is plain Tailwind.
+- **NEVER** expose a family's `accessToken` on public routes outside the official RSVP flow.
+- **NEVER** switch to `prisma migrate` without agreeing first — while the schema is young the convention is `prisma db push`.
+- **NEVER** use `git commit --no-verify` or skip hooks/linters to "make the build pass" — fix the root cause.
+- **NEVER** write UI copy in English — every user-facing string is in pt-BR.
+- **NEVER** run `make db-reset` or `make clean` against a shared environment without agreeing first — both are destructive.
 
 ## Deployment
 
