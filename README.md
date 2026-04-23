@@ -12,9 +12,9 @@ confirmação de presença (RSVP), lista de presentes e painel administrativo.
 - **Zod** para validação
 - **bcryptjs** para hashing de senha
 
-## Scope desta branch
+## Scope
 
-Esta branch (`claude/wedding-app-family-management-ygMTy`) implementa a primeira
+A branch `main` implementa a primeira
 fatia do produto:
 
 - Setup inicial do projeto (Next.js + Prisma + Tailwind + NextAuth).
