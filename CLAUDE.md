@@ -151,23 +151,10 @@ See `.env.example`.
 - **NEVER** write UI copy in English — every user-facing string is in pt-BR.
 - **NEVER** run `make db-reset` or `make clean` against a shared environment without agreeing first — both are destructive.
 
-## Deployment
+## Maintaining This File
 
-Production is containerized. The multi-stage `Dockerfile` builds a Next.js `standalone` image based on `node:22-slim` with `openssl` and `ca-certificates` (required so Prisma's schema engine detects the right libssl). The runner stage runs as a non-root `nextjs` user.
+`CLAUDE.md` is the canonical guide for anyone — human or agent — working in this repo. Keep it in sync with the code as the project evolves:
 
-### Prerequisites
-
-- Docker + Docker Compose (for dev and recommended for prod), or Node.js 20+ with a reachable Postgres 14+.
-- A populated `.env` (see `.env.example`).
-
-### Deployment Steps
-
-1. **Prepare environment** — set `DATABASE_URL`, `AUTH_SECRET`, `AUTH_TRUST_HOST=true`, `ADMIN_SEED_*`. For production, generate `AUTH_SECRET` with `openssl rand -base64 32`.
-2. **Apply schema** — `npx prisma db push` (or `prisma migrate deploy` once migrations are introduced).
-3. **Seed initial admin** — `npm run db:seed` (only needs to run once per environment).
-4. **Build the image** — `make build-prod` (`docker build -t yauoc:latest .`).
-5. **Run** — `docker run --env-file .env -p 3000:3000 yauoc:latest` (or your orchestrator of choice).
-
-### Scope Notes
-
-This repository is early-stage. Currently shipped: project bootstrap, admin auth, Family Management CRUD with unique access tokens. **Not yet shipped**: public RSVP flow, gift list, background jobs/notifications, final landing page. Those should land in separate branches/PRs and will extend the schema (likely adding `attending` on `FamilyMember`, `respondedAt`/`declinedAt` on `Family`, plus `Gift`/`GiftContribution` models).
+- When you add, change, or remove a model, route, env var, Make target, convention, or prohibition, update the matching section **in the same PR**.
+- When a feature listed as "not yet shipped" lands, move it from that note into the appropriate section (Schema, Routes, Authentication Flow, etc.).
+- Treat this file as code, not documentation that drifts. PRs that change behavior without updating `CLAUDE.md` should be flagged in review.
